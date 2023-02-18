@@ -1,19 +1,19 @@
-package com.example.androidlecture_8_retrofit
+package com.example.androidlecture_8_retrofit.data.cloud
 
 import retrofit2.Call
 import retrofit2.http.GET
 
 interface JokeService {
     @GET("https://official-joke-api.appspot.com/random_joke/")
-    fun getJoke(): Call<JokeDTO>
+    fun getJoke(): Call<JokeServerModel>
 }
 
 interface ServiceCallback {
-    fun returnSuccess(data: JokeDTO)
+    fun returnSuccess(data: JokeServerModel)
     fun returnError(type: ErrorType)
 }
 
 enum class ErrorType {
     NO_CONNECTION,
-    OTHER
+    SERVICE_UNAVAILABLE
 }

@@ -1,12 +1,15 @@
-package com.example.androidlecture_8_retrofit
+package com.example.androidlecture_8_retrofit.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
-import org.w3c.dom.Text
+import com.example.androidlecture_8_retrofit.JokeApp
+import com.example.androidlecture_8_retrofit.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +22,11 @@ class MainActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.actionButton)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val textView = findViewById<TextView>(R.id.textView)
+        val checkBox = findViewById<CheckBox>(R.id.checkbox)
+        val changeButton = findViewById<ImageButton>(R.id.changeButton)
+        checkBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.choseFavorites(isChecked)
+        }
         progressBar.visibility = View.VISIBLE
 
         button.setOnClickListener {
@@ -27,11 +35,20 @@ class MainActivity : AppCompatActivity() {
             viewModel.getJoke()
         }
 
-        viewModel.init(object :TextCallback {
+        changeButton.setOnClickListener{
+            viewModel.changeJokeStatus()
+        }
+
+
+        viewModel.init(object : DataCallback {
             override fun provideText(text : String) = runOnUiThread {
                 button.isEnabled = true
                 progressBar.visibility = View.INVISIBLE
                 textView.text = text
+            }
+
+            override fun provideIconRes(id: Int) = runOnUiThread{
+                changeButton.setImageResource(id)
             }
         })
     }

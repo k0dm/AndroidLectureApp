@@ -1,7 +1,8 @@
-package com.example.androidlecture_8_retrofit
+package com.example.androidlecture_8_retrofit.data
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.example.androidlecture_8_retrofit.R
 
 interface JokeFailure {
     fun getMessage(): String
@@ -17,6 +18,11 @@ class ServiceUnavailable(private val resourceManager: ResourceManager) : JokeFai
     override fun getMessage(): String {
         return resourceManager.getString(R.string.service_unavailable)
     }
+}
+
+class NoCachedJokes(private val resourceManager: ResourceManager) : JokeFailure {
+    override fun getMessage() = resourceManager.getString(R.string.no_cached_jokes)
+
 }
 
 interface ResourceManager {
