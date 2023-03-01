@@ -3,6 +3,7 @@ package com.example.androidlecture_8_retrofit.data.cloud
 import com.example.androidlecture_8_retrofit.BaseJoke
 import com.example.androidlecture_8_retrofit.FavoriteJoke
 import com.example.androidlecture_8_retrofit.data.cache.CacheDataSource
+import com.example.androidlecture_8_retrofit.data.cache.realm.JokeRealm
 import com.google.gson.annotations.SerializedName
 
 data class JokeServerModel(
@@ -15,10 +16,17 @@ data class JokeServerModel(
     @SerializedName("punchline")
     private val punchline: String,
 
-) {
-    fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id,this)
-    fun toBaseJoke() = BaseJoke(text,punchline)
-    fun toFavoriteJoke() = FavoriteJoke(text,punchline)
+    ) {
+    fun change(cacheDataSource: CacheDataSource) = cacheDataSource.addOrRemove(id, this)
+    fun toBaseJoke() = BaseJoke(text, punchline)
+    fun toFavoriteJoke() = FavoriteJoke(text, punchline)
+    fun toJokeRealm() = JokeRealm().also {
+        it.id = id
+        it.type = type
+        it.text = text
+        it.punchLine = punchline
+
+    }
 
 
 }

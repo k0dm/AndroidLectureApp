@@ -26,12 +26,12 @@ class BaseModel(
         if (getJokeFromCache) {
             cacheDataSource.getJoke(object : JokeCachedCallback {
                 override fun provide(jokeServerModel: JokeServerModel) {
-//                    cachedJokeServerModel = jokeServerModel
+                    cachedJokeServerModel = jokeServerModel
                     jokeCallback?.provide(jokeServerModel.toFavoriteJoke())
                 }
 
                 override fun fail() {
-//                    cachedJokeServerModel = null
+                    cachedJokeServerModel = null
                     jokeCallback?.provide(FailedJoke(noCachedJoke.getMessage()))
                 }
 
@@ -67,7 +67,7 @@ class BaseModel(
         jokeCallback = null
     }
 
-    override fun changeJokeStatus(jokeCallback: JokeCallback) {
+    override fun changeJokeStatus(jokeCallback: JokeCallback)  {
         cachedJokeServerModel?.change(cacheDataSource)?.let {
             jokeCallback.provide(it)
         }

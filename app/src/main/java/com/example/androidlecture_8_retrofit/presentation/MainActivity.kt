@@ -35,23 +35,24 @@ class MainActivity : AppCompatActivity() {
             viewModel.getJoke()
         }
 
-        changeButton.setOnClickListener{
+        changeButton.setOnClickListener {
             viewModel.changeJokeStatus()
         }
 
 
         viewModel.init(object : DataCallback {
-            override fun provideText(text : String) = runOnUiThread {
+            override fun provideText(text: String) = runOnUiThread {
                 button.isEnabled = true
                 progressBar.visibility = View.INVISIBLE
                 textView.text = text
             }
 
-            override fun provideIconRes(id: Int) = runOnUiThread{
+            override fun provideIconRes(id: Int) = runOnUiThread {
                 changeButton.setImageResource(id)
             }
         })
     }
+
 
     override fun onDestroy() {
         viewModel.clear()

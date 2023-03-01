@@ -36,7 +36,9 @@ class ViewModel(private val model: Model) {
     }
 
     fun changeJokeStatus() {
-        model.changeJokeStatus(jokeCallback)
+        Thread {
+            model.changeJokeStatus(jokeCallback)
+        }.start()
     }
 
 

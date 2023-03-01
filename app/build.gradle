@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
+apply plugin: "realm-android"
 
 android {
     namespace 'com.example.androidlecture_8_retrofit'
@@ -30,10 +32,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    realm {
+        syncEnabled = true
+    }
 }
 
 dependencies {
 
+    implementation 'io.realm:realm-gradle-plugin:10.10.1'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.8.0'
