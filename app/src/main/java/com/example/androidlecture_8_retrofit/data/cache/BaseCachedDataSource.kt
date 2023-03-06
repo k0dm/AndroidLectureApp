@@ -1,6 +1,7 @@
 package com.example.androidlecture_8_retrofit.data.cache
 
-import com.example.androidlecture_8_retrofit.Joke
+import com.example.androidlecture_8_retrofit.JokeUiModel
+import com.example.androidlecture_8_retrofit.data.Joke
 import com.example.androidlecture_8_retrofit.data.JokeCachedCallback
 import com.example.androidlecture_8_retrofit.data.cache.realm.JokeRealm
 import com.example.androidlecture_8_retrofit.data.cloud.JokeServerModel
@@ -15,11 +16,11 @@ class BaseCachedDataSource() : CacheDataSource {
             } else {
                 jokes.random().let {jokeRealm->
                     jokeCachedCallback.provide(
-                        JokeServerModel(
+                        Joke(
                             jokeRealm.id,
                             jokeRealm.type,
                             jokeRealm.text,
-                             jokeRealm.punchLine
+                            jokeRealm.punchLine
                         )
                     )
                 }
@@ -27,21 +28,21 @@ class BaseCachedDataSource() : CacheDataSource {
         }
     }
 
-    override fun addOrRemove(id: Int, jokeServerModel: JokeServerModel): Joke {
+    override fun addOrRemove(id: Int, joke: Joke): JokeUiModel {
         Realm.getDefaultInstance().use {
             val jokeRealm = it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
             return if (jokeRealm == null) {
-                val newJoke = jokeServerModel.toJokeRealm()
+                val newJoke = joke.toJokeRealm()
 
                 it.executeTransaction{ transition ->
                     transition.insert(newJoke)
                 }
-                jokeServerModel.toFavoriteJoke()
+                joke.toFavoriteJoke()
             } else{
                 it.executeTransaction{
                     jokeRealm.deleteFromRealm()
                 }
-                jokeServerModel.toBaseJoke()
+                joke.toBaseJoke()
             }
         }
     }

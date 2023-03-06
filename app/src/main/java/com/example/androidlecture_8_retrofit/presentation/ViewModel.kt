@@ -1,7 +1,7 @@
 package com.example.androidlecture_8_retrofit.presentation
 
 import androidx.annotation.DrawableRes
-import com.example.androidlecture_8_retrofit.Joke
+import com.example.androidlecture_8_retrofit.JokeUiModel
 import com.example.androidlecture_8_retrofit.data.Model
 import com.example.androidlecture_8_retrofit.data.JokeCallback
 
@@ -11,9 +11,9 @@ class ViewModel(private val model: Model) {
     private var dataCallback: DataCallback? = null
 
     private val jokeCallback = object : JokeCallback {
-        override fun provide(joke: Joke) {
+        override fun provide(jokeUiModel: JokeUiModel) {
             dataCallback?.let {
-                joke.map(it)
+                jokeUiModel.map(it)
             }
         }
 

@@ -1,5 +1,6 @@
 package com.example.androidlecture_8_retrofit.data.cloud
 
+import com.example.androidlecture_8_retrofit.data.Joke
 import com.example.androidlecture_8_retrofit.data.JokeCloudCallback
 
 class TestCloudDataSource : CloudDataSource {
@@ -7,7 +8,7 @@ class TestCloudDataSource : CloudDataSource {
 
     override fun getJoke(callback: JokeCloudCallback) {
         callback.provide(
-            JokeServerModel(
+            Joke(
                 0,
                 "testType",
                 "TestText$count",

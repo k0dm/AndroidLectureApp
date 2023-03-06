@@ -16,7 +16,7 @@ class BaseModel(
     private val noCachedJoke by lazy {  NoCachedJokes(resourceManager) }
 
     private var jokeCallback: JokeCallback? = null
-    private var cachedJokeServerModel: JokeServerModel? = null
+    private var cachedJoke: Joke? = null
 
 
     private var getJokeFromCache = false
@@ -25,13 +25,13 @@ class BaseModel(
 
         if (getJokeFromCache) {
             cacheDataSource.getJoke(object : JokeCachedCallback {
-                override fun provide(jokeServerModel: JokeServerModel) {
-                    cachedJokeServerModel = jokeServerModel
-                    jokeCallback?.provide(jokeServerModel.toFavoriteJoke())
+                override fun provide(joke: Joke) {
+                    cachedJoke = joke
+                    jokeCallback?.provide(joke.toFavoriteJoke())
                 }
 
                 override fun fail() {
-                    cachedJokeServerModel = null
+                    cachedJoke = null
                     jokeCallback?.provide(FailedJoke(noCachedJoke.getMessage()))
                 }
 
@@ -40,13 +40,13 @@ class BaseModel(
         } else {
             cloudDataSource.getJoke(object : JokeCloudCallback {
 
-                override fun provide(joke: JokeServerModel) {
-                    cachedJokeServerModel = joke
+                override fun provide(joke: Joke) {
+                        cachedJoke = joke
                     jokeCallback?.provide(joke.toBaseJoke())
                 }
 
                 override fun fail(errorType: ErrorType) {
-                    cachedJokeServerModel = null
+                    cachedJoke = null
                     val failure = if (errorType == ErrorType.NO_CONNECTION) {
                         noConnection
                     } else {
@@ -68,7 +68,7 @@ class BaseModel(
     }
 
     override fun changeJokeStatus(jokeCallback: JokeCallback)  {
-        cachedJokeServerModel?.change(cacheDataSource)?.let {
+        cachedJoke?.change(cacheDataSource)?.let {
             jokeCallback.provide(it)
         }
     }
