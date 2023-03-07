@@ -1,15 +1,16 @@
 package com.example.androidlecture_8_retrofit.data
 
+import com.example.androidlecture_8_retrofit.JokeUiModel
 import com.example.androidlecture_8_retrofit.data.JokeCallback
 
 
 interface Model {
-    fun getJoke()
+    suspend fun getJoke() : JokeUiModel
 
     fun init(callback: JokeCallback)
 
     fun clear()
-    fun changeJokeStatus(jokeCallback: JokeCallback)
+    suspend fun changeJokeStatus(): JokeUiModel?
 
     fun chooseDataSource(cached: Boolean)
 }

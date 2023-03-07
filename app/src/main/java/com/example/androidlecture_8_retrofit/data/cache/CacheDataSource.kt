@@ -2,13 +2,13 @@ package com.example.androidlecture_8_retrofit.data.cache
 
 import com.example.androidlecture_8_retrofit.JokeUiModel
 import com.example.androidlecture_8_retrofit.data.Joke
-import com.example.androidlecture_8_retrofit.data.JokeCachedCallback
-import com.example.androidlecture_8_retrofit.data.cloud.JokeServerModel
+import com.example.androidlecture_8_retrofit.data.cloud.Result
+
 
 interface CacheDataSource {
 
-    fun getJoke(jokeCachedCallback: JokeCachedCallback)
+    suspend  fun getJoke(): Result<Joke, Unit>
 
-    fun addOrRemove(id: Int, joke: Joke): JokeUiModel
+    suspend fun addOrRemove(id: Int, joke: Joke): JokeUiModel
 }
 

@@ -2,20 +2,23 @@ package com.example.androidlecture_8_retrofit.data.cache
 
 import com.example.androidlecture_8_retrofit.JokeUiModel
 import com.example.androidlecture_8_retrofit.data.Joke
-import com.example.androidlecture_8_retrofit.data.JokeCachedCallback
 import com.example.androidlecture_8_retrofit.data.cache.realm.JokeRealm
-import com.example.androidlecture_8_retrofit.data.cloud.JokeServerModel
+import com.example.androidlecture_8_retrofit.data.cache.realm.RealmProvider
+import com.example.androidlecture_8_retrofit.data.cloud.Result
 import io.realm.Realm
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class BaseCachedDataSource() : CacheDataSource {
-    override fun getJoke(jokeCachedCallback: JokeCachedCallback) {
-        Realm.getDefaultInstance().use {
+class BaseCachedDataSource(private val realmProvider: RealmProvider) : CacheDataSource {
+    override suspend fun getJoke(): Result<Joke, Unit> {
+
+        realmProvider.provide().use {
             val jokes = it.where(JokeRealm::class.java).findAll()
             if (jokes.isEmpty()) {
-                jokeCachedCallback.fail()
+                return Result.Error(Unit)
             } else {
-                jokes.random().let {jokeRealm->
-                    jokeCachedCallback.provide(
+                jokes.random().let { jokeRealm ->
+                    return Result.Success(
                         Joke(
                             jokeRealm.id,
                             jokeRealm.type,
@@ -28,22 +31,24 @@ class BaseCachedDataSource() : CacheDataSource {
         }
     }
 
-    override fun addOrRemove(id: Int, joke: Joke): JokeUiModel {
-        Realm.getDefaultInstance().use {
-            val jokeRealm = it.where(JokeRealm::class.java).equalTo("id",id).findFirst()
-            return if (jokeRealm == null) {
-                val newJoke = joke.toJokeRealm()
+    override suspend fun addOrRemove(id: Int, joke: Joke): JokeUiModel =
+        withContext(Dispatchers.IO) {
+            realmProvider.provide().use {
+                val jokeRealm = it.where(JokeRealm::class.java).equalTo("id", id).findFirst()
+                return@withContext if (jokeRealm == null) {
+                    val newJoke = joke.toJokeRealm()
 
-                it.executeTransaction{ transition ->
-                    transition.insert(newJoke)
+                    it.executeTransaction { transition ->
+                        transition.insert(newJoke)
+                    }
+                    joke.toFavoriteJoke()
+                } else {
+                    it.executeTransaction {
+                        jokeRealm.deleteFromRealm()
+                    }
+                    joke.toBaseJoke()
                 }
-                joke.toFavoriteJoke()
-            } else{
-                it.executeTransaction{
-                    jokeRealm.deleteFromRealm()
-                }
-                joke.toBaseJoke()
             }
         }
-    }
+
 }

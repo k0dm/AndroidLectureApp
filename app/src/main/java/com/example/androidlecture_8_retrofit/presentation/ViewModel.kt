@@ -4,9 +4,11 @@ import androidx.annotation.DrawableRes
 import com.example.androidlecture_8_retrofit.JokeUiModel
 import com.example.androidlecture_8_retrofit.data.Model
 import com.example.androidlecture_8_retrofit.data.JokeCallback
+import  androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
-
-class ViewModel(private val model: Model) {
+class ViewModel(private val model: Model) : ViewModel() {
 
     private var dataCallback: DataCallback? = null
 
@@ -26,19 +28,26 @@ class ViewModel(private val model: Model) {
         model.init(jokeCallback)
     }
 
-    fun getJoke() {
-        model.getJoke()
+    fun getJoke() = viewModelScope.launch {
+
+        val uiModel = model.getJoke()
+
+        dataCallback?.let {
+            uiModel.map(it)
+        }
     }
+
 
     fun clear() {
         dataCallback = null
         model.clear()
     }
 
-    fun changeJokeStatus() {
-        Thread {
-            model.changeJokeStatus(jokeCallback)
-        }.start()
+     fun changeJokeStatus() = viewModelScope.launch{
+        val uiModel = model.changeJokeStatus()
+         dataCallback?.let {
+             uiModel?.map(it)
+         }
     }
 
 

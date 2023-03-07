@@ -4,11 +4,11 @@ import android.app.Application
 import com.example.androidlecture_8_retrofit.data.BaseModel
 import com.example.androidlecture_8_retrofit.data.BaseResourceManager
 import com.example.androidlecture_8_retrofit.data.cache.BaseCachedDataSource
+import com.example.androidlecture_8_retrofit.data.cache.realm.RealmProvider
 import com.example.androidlecture_8_retrofit.data.cloud.BaseCloudDataSource
 import com.example.androidlecture_8_retrofit.data.cloud.JokeService
 import com.example.androidlecture_8_retrofit.presentation.ViewModel
 import io.realm.Realm
-import io.realm.mongodb.sync.SyncConfiguration
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -37,7 +37,7 @@ class JokeApp : Application() {
 
         viewModel = ViewModel(
             BaseModel(
-                BaseCachedDataSource(),
+                BaseCachedDataSource(RealmProvider.Base()),
                 BaseCloudDataSource(retrofit.create(JokeService::class.java)),
                 BaseResourceManager(this)
             )
